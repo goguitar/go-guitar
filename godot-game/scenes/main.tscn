@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8xvqb5k6y7"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/highway.gd" id="2_highway"]
+[ext_resource type="Script" path="res://scripts/note_manager.gd" id="3_note_manager"]
+[ext_resource type="Script" path="res://scripts/chord_manager.gd" id="4_chord_manager"]
+[ext_resource type="Script" path="res://scripts/game_controller.gd" id="5_game_controller"]
+[ext_resource type="Script" path="res://scripts/ui.gd" id="6_ui"]
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 8, 20)
+fov = 60.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 15, 0)
+shadow_enabled = true
+
+[node name="Highway" type="Node3D" parent="."]
+script = ExtResource("2_highway")
+
+[node name="NoteManager" type="Node3D" parent="."]
+script = ExtResource("3_note_manager")
+
+[node name="ChordManager" type="Node3D" parent="."]
+script = ExtResource("4_chord_manager")
+
+[node name="GameController" type="Node3D" parent="."]
+script = ExtResource("5_game_controller")
+
+[node name="UIController" type="CanvasLayer" parent="."]
+script = ExtResource("6_ui")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 10)
+size = Vector3(50, 1, 100)
