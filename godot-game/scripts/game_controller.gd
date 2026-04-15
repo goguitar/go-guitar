@@ -25,15 +25,13 @@ var _next_chord_idx: int = 0
 var _song_chords: Array = []
 
 func _ready() -> void:
-	highway = get_parent().get_node_or_null("Highway")
-	note_manager = get_parent().get_node_or_null("NoteManager")
-	chord_manager = get_parent().get_node_or_null("ChordManager")
-	ui = get_parent().get_node_or_null("UIController")
+	highway = get_parent().get_node("Highway")
+	note_manager = get_parent().get_node("NoteManager")
+	chord_manager = get_parent().get_node("ChordManager")
+	ui = get_parent().get_node("UIController")
 	
-	if note_manager:
-		note_manager.game_controller = self
-	if chord_manager:
-		chord_manager.game_controller = self
+	note_manager.game_controller = self
+	chord_manager.game_controller = self
 	
 	_generate_demo_song()
 
@@ -54,13 +52,12 @@ func _update_notes() -> void:
 		var note_time: float = note_data.get("time", 0.0)
 		
 		if note_time <= song_time + 3.0:
-			if note_manager:
-				note_manager.spawn_note(
-					note_data.get("fret", 1),
-					note_data.get("string", 0),
-					note_time,
-					note_data.get("duration", 0.25)
-				)
+			note_manager.spawn_note(
+				note_data.get("fret", 1),
+				note_data.get("string", 0),
+				note_time,
+				note_data.get("duration", 0.25)
+			)
 			_next_note_idx += 1
 		else:
 			break
@@ -71,12 +68,11 @@ func _update_chords() -> void:
 		var chord_time: float = chord_data.get("time", 0.0)
 		
 		if chord_time <= song_time + 3.0:
-			if chord_manager:
-				chord_manager.spawn_chord(
-					chord_data.get("notes", []),
-					chord_time,
-					chord_data.get("name", "")
-				)
+			chord_manager.spawn_chord(
+				chord_data.get("notes", []),
+				chord_time,
+				chord_data.get("name", "")
+			)
 			_next_chord_idx += 1
 		else:
 			break
@@ -86,8 +82,7 @@ func _update_highway() -> void:
 	if next_note_fret >= 1:
 		var min_fret := next_note_fret - 1
 		var max_fret := next_note_fret + 3
-		if highway:
-			highway.set_active_fret_range(min_fret, maxi(min_fret, max_fret))
+		highway.set_active_fret_range(min_fret, maxi(min_fret, max_fret))
 		
 		var lane_targets: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 		for note_data in _song_notes:
@@ -97,12 +92,10 @@ func _update_highway() -> void:
 				var note_string: int = note_data.get("string", 0)
 				if note_fret >= min_fret and note_fret <= max_fret:
 					lane_targets[note_string] = 1.0
-		if highway:
-			highway.set_lane_intensities(lane_targets)
+		highway.set_lane_intensities(lane_targets)
 	else:
-		if highway:
-			highway.set_active_fret_range(0, -1)
-			highway.set_lane_intensities([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+		highway.set_active_fret_range(0, -1)
+		highway.set_lane_intensities([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
 func _get_next_note_fret() -> int:
 	for i in range(_next_note_idx, _song_notes.size()):
@@ -123,7 +116,7 @@ func _generate_demo_song() -> void:
 	var beat := 0.5
 	var time := 2.0
 	
-	var patterns := [
+	var patterns: Array = [
 		[[0, 0], [1, 1], [2, 2], [3, 3]],
 		[[2, 0], [3, 1], [4, 2], [5, 3]],
 		[[0, 0], [2, 1], [4, 2], [5, 3]],
@@ -131,10 +124,10 @@ func _generate_demo_song() -> void:
 	]
 	
 	for i in range(80):
-		var pattern := patterns[i % patterns.size()]
+		var pattern: Array = patterns[i % patterns.size()]
 		for note_data in pattern:
-			var fret := note_data[0]
-			var string_idx := note_data[1]
+			var fret: int = note_data[0]
+			var string_idx: int = note_data[1]
 			_song_notes.append({
 				"fret": fret,
 				"string": string_idx,

@@ -1,7 +1,13 @@
 extends Node3D
 
-const FRET_COUNT : int = 24
-const STRING_COUNT : int = 6
+const STRING_COLORS: Array[Color] = [
+	Color(0.98, 0.26, 0.22, 1.0),
+	Color(0.98, 0.78, 0.16, 1.0),
+	Color(0.20, 0.80, 0.95, 1.0),
+	Color(1.00, 0.55, 0.10, 1.0),
+	Color(0.20, 0.88, 0.30, 1.0),
+	Color(0.72, 0.38, 0.98, 1.0),
+]
 
 const POOL_SIZE : int = 50
 const SPAWN_Z : float = -30.0
@@ -11,11 +17,17 @@ const MISS_HOLD : float = 1.0
 
 var _note_pool: Array[Node3D] = []
 var _active_notes: Array = []
-var _note_scene: PackedScene
 
 var game_controller: Node3D
+var highway_node: Node3D
+
+const FRET_COUNT : int = 24
+const SCALE_LENGTH : float = 300.0
+const FRET_WORLD_WIDTH : float = 25.0
+const STRING_SLOT_HEIGHT : float = 1.2
 
 func _ready() -> void:
+	highway_node = get_parent().get_node("Highway")
 	_create_note_pool()
 
 func _create_note_pool() -> void:
@@ -77,38 +89,38 @@ func spawn_note(fret: int, string_idx: int, time: float, duration: float = 0.25)
 	note.set("hit", false)
 	note.set("miss_time", -1.0)
 	
-	var x := Common.fret_mid_world_x(fret - 1)
-	var y := Common.string_world_y(string_idx)
+	var x: float = _fret_mid_world_x(fret - 1)
+	var y: float = _string_world_y(string_idx)
 	note.position = Vector3(x, y, SPAWN_Z)
 	
 	var finger := note.get_node("Finger") as MeshInstance3D
 	if finger:
-		var size := Common.note_indicator_size(fret)
-		var box_mesh := finger.mesh as BoxMesh
-		if box_mesh:
-			box_mesh.size = Vector3(size.x, size.y, 0.15)
+		var size: Vector2 = _note_indicator_size(fret)
+		var box := finger.mesh as BoxMesh
+		if box:
+			box.size = Vector3(size.x, size.y, 0.15)
 		var mat := StandardMaterial3D.new()
-		mat.albedo_color = Common.STRING_COLORS[string_idx]
+		mat.albedo_color = STRING_COLORS[string_idx]
 		mat.emission_enabled = true
-		mat.emission = Common.STRING_COLORS[string_idx]
+		mat.emission = STRING_COLORS[string_idx]
 		mat.emission_energy_multiplier = 1.0
 		finger.set_surface_override_material(0, mat)
 	
 	var tail := note.get_node("Tail") as MeshInstance3D
 	if tail:
 		var mat := StandardMaterial3D.new()
-		mat.albedo_color = Common.STRING_COLORS[string_idx]
+		mat.albedo_color = STRING_COLORS[string_idx]
 		mat.emission_enabled = true
-		mat.emission = Common.STRING_COLORS[string_idx]
+		mat.emission = STRING_COLORS[string_idx]
 		mat.emission_energy_multiplier = 0.5
 		tail.set_surface_override_material(0, mat)
 	
 	var marker := note.get_node("Marker") as MeshInstance3D
 	if marker:
 		var mat := StandardMaterial3D.new()
-		mat.albedo_color = Common.STRING_COLORS[string_idx]
+		mat.albedo_color = STRING_COLORS[string_idx]
 		mat.emission_enabled = true
-		mat.emission = Common.STRING_COLORS[string_idx]
+		mat.emission = STRING_COLORS[string_idx]
 		mat.emission_energy_multiplier = 1.5
 		marker.set_surface_override_material(0, mat)
 	
@@ -154,7 +166,7 @@ func _process(delta: float) -> void:
 		
 		if hit:
 			var hit_start: float = note.get("hit_time", song_time)
-			var t: float = song_time - hit_start
+			var t := song_time - hit_start
 			if t > 0.3:
 				notes_to_remove.append(note)
 			elif finger:
@@ -162,7 +174,7 @@ func _process(delta: float) -> void:
 				mat.albedo_color = Color.WHITE
 				mat.emission_enabled = true
 				mat.emission = Color.WHITE
-				mat.emission_energy_multiplier = maxf(0.0, 2.5 - t * 8.0)
+				mat.emission_energy_multiplier = 2.5 - t * 8.0
 				mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 				mat.albedo_color.a = maxf(0.0, 1.0 - t * 3.0)
 				finger.set_surface_override_material(0, mat)
@@ -180,7 +192,7 @@ func _process(delta: float) -> void:
 
 func hit_note(note: Node3D) -> void:
 	note.set("hit", true)
-	note.set("hit_time", song_time if has_method("song_time") else 0.0)
+	note.set("hit_time", 0.0)
 	if game_controller and game_controller.has_method("get_song_time"):
 		note.set("hit_time", game_controller.get_song_time())
 
@@ -191,3 +203,27 @@ func _return_note(note: Node3D) -> void:
 	note.visible = false
 	note.set("hit", false)
 	note.set("miss_time", -1.0)
+
+static func chart_fret_pos(fret_num: float) -> float:
+	return SCALE_LENGTH - (SCALE_LENGTH / pow(2.0, fret_num / 12.0))
+
+func _fret_mid_world_x(fret_num: int) -> float:
+	var max_pos: float = chart_fret_pos(float(FRET_COUNT))
+	if max_pos <= 0.001:
+		return 0.0
+	var curr := chart_fret_pos(float(fret_num))
+	var nxt := chart_fret_pos(float(fret_num) + 1.0)
+	return (curr + nxt) * 0.5 / max_pos * FRET_WORLD_WIDTH
+
+func _string_world_y(str_idx: int) -> float:
+	return (3.0 + float(5 - str_idx) * 4.0)
+
+func _note_indicator_size(fret_num: int) -> Vector2:
+	var max_pos: float = chart_fret_pos(float(FRET_COUNT))
+	if max_pos <= 0.001:
+		return Vector2(1.0, 0.8)
+	var curr := chart_fret_pos(float(fret_num))
+	var nxt := chart_fret_pos(float(fret_num) + 1.0)
+	var w := (nxt - curr) / max_pos * FRET_WORLD_WIDTH
+	var h := STRING_SLOT_HEIGHT * 0.8
+	return Vector2(maxf(w, 0.3), maxf(h, 0.6))
