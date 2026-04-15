@@ -103,8 +103,9 @@ func spawn_note(fret: int, string_idx: int, time: float, duration: float = 0.25)
 		mat.albedo_color = STRING_COLORS[string_idx]
 		mat.emission_enabled = true
 		mat.emission = STRING_COLORS[string_idx]
-		mat.emission_energy_multiplier = 1.0
-		finger.set_surface_override_material(0, mat)
+		mat.emission_energy_multiplier = 2.0
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		finger.material_override = mat
 	
 	var tail := note.get_node("Tail") as MeshInstance3D
 	if tail:
@@ -112,8 +113,9 @@ func spawn_note(fret: int, string_idx: int, time: float, duration: float = 0.25)
 		mat.albedo_color = STRING_COLORS[string_idx]
 		mat.emission_enabled = true
 		mat.emission = STRING_COLORS[string_idx]
-		mat.emission_energy_multiplier = 0.5
-		tail.set_surface_override_material(0, mat)
+		mat.emission_energy_multiplier = 1.0
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		tail.material_override = mat
 	
 	var marker := note.get_node("Marker") as MeshInstance3D
 	if marker:
@@ -121,8 +123,9 @@ func spawn_note(fret: int, string_idx: int, time: float, duration: float = 0.25)
 		mat.albedo_color = STRING_COLORS[string_idx]
 		mat.emission_enabled = true
 		mat.emission = STRING_COLORS[string_idx]
-		mat.emission_energy_multiplier = 1.5
-		marker.set_surface_override_material(0, mat)
+		mat.emission_energy_multiplier = 3.0
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		marker.material_override = mat
 	
 	var label := note.get_node("Label") as Label3D
 	if label:
