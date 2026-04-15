@@ -34,6 +34,7 @@ func _ready() -> void:
 	chord_manager.game_controller = self
 	
 	_generate_demo_song()
+	start_song()
 
 func _process(delta: float) -> void:
 	if is_playing:
