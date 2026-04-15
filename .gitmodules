@@ -1,0 +1,3 @@
+[submodule "rust-backend/ext/vgmstream"]
+	path = rust-backend/ext/vgmstream
+	url = https://github.com/vgmstream/vgmstream.git

@@ -1,0 +1,64 @@
+[package]
+name = "go-guitar"
+version = "0.1.0"
+edition = "2021"
+authors = ["go-guitar team"]
+description = "Go-Guitar: A 3D guitar game using Godot 4 and Rust"
+license = "MIT"
+repository = "https://github.com/goguitar/go-guitar"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+godot = { version = "0.5.1", features = ["api-4-4"] }
+thiserror = "1"
+anyhow = "1"
+log = "0.4"
+env_logger = "0.11"
+quick-xml = "0.31"
+
+[dependencies.rocksmith2014-psarc]
+git = "https://github.com/santzit/Rocksmith2014.rs"
+package = "rocksmith2014-psarc"
+rev = "7bf403e0397383adbf1faaf9fb932e2f8481a7de"
+optional = true
+
+[dependencies.rocksmith2014-xml]
+git = "https://github.com/santzit/Rocksmith2014.rs"
+package = "rocksmith2014-xml"
+rev = "7bf403e0397383adbf1faaf9fb932e2f8481a7de"
+optional = true
+
+[dependencies.rocksmith2014-sng]
+git = "https://github.com/santzit/Rocksmith2014.rs"
+package = "rocksmith2014-sng"
+rev = "7bf403e0397383adbf1faaf9fb932e2f8481a7de"
+optional = true
+
+[dependencies.rocksmith2014-common]
+git = "https://github.com/santzit/Rocksmith2014.rs"
+package = "rocksmith2014-common"
+rev = "7bf403e0397383adbf1faaf9fb932e2f8481a7de"
+optional = true
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[dependencies.hound]
+version = "3.5"
+optional = true
+
+[build-dependencies]
+bindgen = "0.68"
+
+[features]
+default = ["rocksmith"]
+rocksmith = ["dep:rocksmith2014-psarc", "dep:rocksmith2014-xml", "dep:rocksmith2014-sng", "dep:rocksmith2014-common"]
+audio = ["dep:cpal", "dep:hound"]
+vgmstream = ["dep:hound"]
+
+[profile.release]
+opt-level = 3
+lto = true
