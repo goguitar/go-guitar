@@ -19,7 +19,7 @@ const STRING_HEIGHT_SCALE : float = 1.0
 
 var _fret_markers: Array = []
 var _string_meshes: Array = []
-var _lane_intensities: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+var _lane_intensities: Array = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 var _active_fret_min: int = 0
 var _active_fret_max: int = -1
 
@@ -81,7 +81,7 @@ func _create_strings() -> void:
 		add_child(str)
 		_string_meshes.append(str)
 
-func set_lane_intensities(values: Array[float]) -> void:
+func set_lane_intensities(values: Array) -> void:
 	_lane_intensities = values
 	for i in range(mini(values.size(), STRING_COUNT)):
 		var str_mesh = _string_meshes[i] if i < _string_meshes.size() else null

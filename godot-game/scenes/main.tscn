@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c8xvqb5k6y7"]
+[gd_scene load_steps=8 format=3 uid="uid://c8xvqb5k6y7"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/highway.gd" id="2_highway"]
@@ -25,6 +25,11 @@ ambient_light_energy = 0.5
 tonemap_mode = 2
 glow_enabled = true
 glow_intensity = 0.5
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.03, 0.03, 0.05, 1)
+metallic = 0.1
+roughness = 0.9
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -58,9 +63,4 @@ script = ExtResource("6_ui")
 [node name="Floor" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, -1, 50)
 size = Vector3(50, 0.5, 100)
-material = null
-
-[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
-albedo_color = Color(0.03, 0.03, 0.05, 1)
-metallic = 0.1
-roughness = 0.9
+material_override = SubResource("FloorMaterial")
