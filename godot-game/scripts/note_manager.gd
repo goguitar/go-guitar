@@ -82,12 +82,12 @@ func spawn_note(fret: int, string_idx: int, time: float, duration: float = 0.25)
 		return null
 	
 	note.visible = true
-	note.set("fret", fret)
-	note.set("string_idx", string_idx)
-	note.set("time", time)
-	note.set("duration", duration)
-	note.set("hit", false)
-	note.set("miss_time", -1.0)
+	note.set_meta("fret", fret)
+	note.set_meta("string_idx", string_idx)
+	note.set_meta("time", time)
+	note.set_meta("duration", duration)
+	note.set_meta("hit", false)
+	note.set_meta("miss_time", -1.0)
 	
 	var x: float = _fret_mid_world_x(fret - 1)
 	var y: float = _string_world_y(string_idx)
@@ -146,18 +146,18 @@ func _process(delta: float) -> void:
 	var notes_to_remove: Array = []
 	
 	for note in _active_notes:
-		var note_time: float = note.get("time", 0.0)
+		var note_time: float = note.get_meta("time", 0.0)
 		var z := STRIKE_Z - (note_time - song_time) * TRAVEL_SPEED
 		note.position.z = z
 		
 		var finger := note.get_node("Finger") as MeshInstance3D
 		var tail := note.get_node("Tail") as MeshInstance3D
 		
-		var hit: bool = note.get("hit", false)
-		var miss_time: float = note.get("miss_time", -1.0)
+		var hit: bool = note.get_meta("hit", false)
+		var miss_time: float = note.get_meta("miss_time", -1.0)
 		
 		if not hit and z <= STRIKE_Z:
-			note.set("miss_time", song_time)
+			note.set_meta("miss_time", song_time)
 			if game_controller and game_controller.has_method("note_missed"):
 				game_controller.note_missed()
 		
@@ -165,7 +165,7 @@ func _process(delta: float) -> void:
 			notes_to_remove.append(note)
 		
 		if hit:
-			var hit_start: float = note.get("hit_time", song_time)
+			var hit_start: float = note.get_meta("hit_time", song_time)
 			var t := song_time - hit_start
 			if t > 0.3:
 				notes_to_remove.append(note)
@@ -191,18 +191,18 @@ func _process(delta: float) -> void:
 		_return_note(note)
 
 func hit_note(note: Node3D) -> void:
-	note.set("hit", true)
-	note.set("hit_time", 0.0)
+	note.set_meta("hit", true)
+	note.set_meta("hit_time", 0.0)
 	if game_controller and game_controller.has_method("get_song_time"):
-		note.set("hit_time", game_controller.get_song_time())
+		note.set_meta("hit_time", game_controller.get_song_time())
 
 func _return_note(note: Node3D) -> void:
 	var idx := _active_notes.find(note)
 	if idx >= 0:
 		_active_notes.remove_at(idx)
 	note.visible = false
-	note.set("hit", false)
-	note.set("miss_time", -1.0)
+	note.set_meta("hit", false)
+	note.set_meta("miss_time", -1.0)
 
 static func chart_fret_pos(fret_num: float) -> float:
 	return SCALE_LENGTH - (SCALE_LENGTH / pow(2.0, fret_num / 12.0))

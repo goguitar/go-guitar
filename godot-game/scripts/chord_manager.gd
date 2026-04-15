@@ -59,10 +59,10 @@ func spawn_chord(notes: Array, time: float, chord_name: String = "") -> Node3D:
 		return null
 	
 	chord.visible = true
-	chord.set("time", time)
-	chord.set("hit", false)
-	chord.set("miss_time", -1.0)
-	chord.set("notes", notes)
+	chord.set_meta("time", time)
+	chord.set_meta("hit", false)
+	chord.set_meta("miss_time", -1.0)
+	chord.set_meta("notes", notes)
 	
 	var min_fret := 999
 	var max_fret := -1
@@ -170,15 +170,15 @@ func _process(delta: float) -> void:
 	var chords_to_remove: Array = []
 	
 	for chord in _active_chords:
-		var chord_time: float = chord.get("time", 0.0)
+		var chord_time: float = chord.get_meta("time", 0.0)
 		var z := STRIKE_Z - (chord_time - song_time) * TRAVEL_SPEED
 		chord.position.z = z
 		
-		var hit: bool = chord.get("hit", false)
-		var miss_time: float = chord.get("miss_time", -1.0)
+		var hit: bool = chord.get_meta("hit", false)
+		var miss_time: float = chord.get_meta("miss_time", -1.0)
 		
 		if not hit and z <= STRIKE_Z:
-			chord.set("miss_time", song_time)
+			chord.set_meta("miss_time", song_time)
 			if game_controller and game_controller.has_method("chord_missed"):
 				game_controller.chord_missed()
 		
@@ -186,7 +186,7 @@ func _process(delta: float) -> void:
 			chords_to_remove.append(chord)
 		
 		if hit:
-			var hit_start: float = chord.get("hit_time", song_time)
+			var hit_start: float = chord.get_meta("hit_time", song_time)
 			var t := song_time - hit_start
 			if t > 0.3:
 				chords_to_remove.append(chord)
@@ -195,18 +195,18 @@ func _process(delta: float) -> void:
 		_return_chord(chord)
 
 func hit_chord(chord: Node3D) -> void:
-	chord.set("hit", true)
-	chord.set("hit_time", 0.0)
+	chord.set_meta("hit", true)
+	chord.set_meta("hit_time", 0.0)
 	if game_controller and game_controller.has_method("get_song_time"):
-		chord.set("hit_time", game_controller.get_song_time())
+		chord.set_meta("hit_time", game_controller.get_song_time())
 
 func _return_chord(chord: Node3D) -> void:
 	var idx := _active_chords.find(chord)
 	if idx >= 0:
 		_active_chords.remove_at(idx)
 	chord.visible = false
-	chord.set("hit", false)
-	chord.set("miss_time", -1.0)
+	chord.set_meta("hit", false)
+	chord.set_meta("miss_time", -1.0)
 	
 	var frame := chord.get_node("Frame") as Node3D
 	if frame:
