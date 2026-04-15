@@ -10,9 +10,9 @@ const STRING_COLORS: Array[Color] = [
 ]
 
 const POOL_SIZE : int = 50
-const SPAWN_Z : float = -30.0
-const STRIKE_Z : float = 0.0
-const TRAVEL_SPEED : float = 8.0
+const SPAWN_Z : float = -10.0
+const STRIKE_Z : float = 2.0
+const TRAVEL_SPEED : float = 10.0
 const MISS_HOLD : float = 1.0
 
 var _note_pool: Array[Node3D] = []
@@ -215,7 +215,7 @@ func _fret_mid_world_x(fret_num: int) -> float:
 	var nxt := chart_fret_pos(float(fret_num) + 1.0)
 	return (curr + nxt) * 0.5 / max_pos * FRET_WORLD_WIDTH
 
-func _string_world_y(str_idx: int) -> float:
+static func _string_world_y(str_idx: int) -> float:
 	return (3.0 + float(5 - str_idx) * 4.0)
 
 func _note_indicator_size(fret_num: int) -> Vector2:

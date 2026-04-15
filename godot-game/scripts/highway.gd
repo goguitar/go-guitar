@@ -30,8 +30,8 @@ func _ready() -> void:
 func _create_fretboard() -> void:
 	var fretboard := CSGBox3D.new()
 	fretboard.name = "Fretboard"
-	fretboard.size = Vector3(FRET_WORLD_WIDTH + 2, 0.1, 100)
-	fretboard.position = Vector3(FRET_WORLD_WIDTH * 0.5, -0.05, 50)
+	fretboard.size = Vector3(FRET_WORLD_WIDTH + 2, 0.1, 30)
+	fretboard.position = Vector3(FRET_WORLD_WIDTH * 0.5, -0.05, 15)
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = Color(0.08, 0.05, 0.03)
 	mat.roughness = 0.9
@@ -40,8 +40,8 @@ func _create_fretboard() -> void:
 	
 	var nut := CSGBox3D.new()
 	nut.name = "Nut"
-	nut.size = Vector3(0.08, 0.15, 8)
-	nut.position = Vector3(-0.04, 0.05, 4)
+	nut.size = Vector3(0.08, 0.15, 2)
+	nut.position = Vector3(-0.04, 0.05, 0)
 	var nut_mat := StandardMaterial3D.new()
 	nut_mat.albedo_color = Color(0.15, 0.12, 0.1)
 	nut_mat.metallic = 0.2
@@ -52,8 +52,8 @@ func _create_fretboard() -> void:
 		var fret_x := fret_separator_world_x(fret)
 		var wire := CSGBox3D.new()
 		wire.name = "FretWire_%d" % fret
-		wire.size = Vector3(0.03, 0.08, 100)
-		wire.position = Vector3(fret_x, 0.04, 50)
+		wire.size = Vector3(0.03, 0.08, 30)
+		wire.position = Vector3(fret_x, 0.04, 15)
 		var wire_mat := StandardMaterial3D.new()
 		var is_inlay := (fret == 3 or fret == 5 or fret == 7 or fret == 9 or 
 		                  fret == 12 or fret == 15 or fret == 17 or fret == 19 or fret == 21)
@@ -72,7 +72,7 @@ func _create_strings() -> void:
 		var str := CSGBox3D.new()
 		str.name = "String_%d" % str_idx
 		str.size = Vector3(FRET_WORLD_WIDTH + 2, 0.015, 0.015)
-		str.position = Vector3(FRET_WORLD_WIDTH * 0.5, str_y, 4)
+		str.position = Vector3(FRET_WORLD_WIDTH * 0.5, str_y, 1)
 		var str_mat := StandardMaterial3D.new()
 		str_mat.albedo_color = STRING_COLORS[str_idx]
 		str_mat.metallic = 0.8
