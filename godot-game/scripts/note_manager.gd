@@ -10,9 +10,9 @@ const STRING_COLORS: Array[Color] = [
 ]
 
 const POOL_SIZE : int = 50
-const SPAWN_Z : float = -10.0
-const STRIKE_Z : float = 2.0
-const TRAVEL_SPEED : float = 10.0
+const SPAWN_Z : float = 50.0
+const STRIKE_Z : float = -5.0
+const TRAVEL_SPEED : float = 12.0
 const MISS_HOLD : float = 1.0
 
 var _note_pool: Array[Node3D] = []
